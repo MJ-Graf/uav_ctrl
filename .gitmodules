@@ -1,3 +1,0 @@
-[submodule "external/ros/px4_msgs"]
-	path = external/ros/px4_msgs
-	url = https://github.com/PX4/px4_msgs.git
