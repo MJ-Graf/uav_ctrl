@@ -51,8 +51,19 @@ RUN apt update && apt install python3-rosinstall-generator && \
     vcs import src < foxy-ros-base.repos  && \
     rosdep init && rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-5.3.1 urdfdom_headers" &&\
     cd /opt/ros/foxy && colcon build --symlink-install
- 
-#RUN git clone https://github.com/PX4/px4_msgs.git /opt/ros/foxy/src && \
-#    git clone https://github.com/PX4/px4_msgs.git ~/px4_ros_com_ros2/src/px4_msgs && \
-#    cd ~/px4_ros_com_ros2/src/px4_ros_com/scripts && \
-#    source build_ros2_workspace.bash --ros_distro foxy
+RUN source /opt/ros/foxy/install/setup.bash  \
+    && git clone --recursive https://github.com/eProsima/Fast-RTPS-Gen.git -b v1.0.4 /opt/Fast-RTPS-Gen \
+    && cd /opt/Fast-RTPS-Gen \
+    && ./gradlew assemble \
+    && ./gradlew install 
+
+RUN git clone https://github.com/PX4/px4_msgs.git /opt/px4_ros_com_ros2/src/px4_msgs \
+    && git clone https://github.com/PX4/px4_ros_com.git /opt/px4_ros_com_ros2/src//px4_ros_com
+
+RUN cd /opt/px4_ros_com_ros2/src/px4_ros_com/scripts \
+    && sed -i "s/fastrtps_version = ''/fastrtps_version = '2.1.1'/" generate_microRTPS_bridge.py && sed -i "204,211d" generate_microRTPS_bridge.py \ 
+    && pip3 install --user pyros-genmsg \
+    && bash -c "source build_ros2_workspace.bash --ros_distro foxy --ros_path /opt/ros/foxy/install/setup.bash --verbose"
+
+
+
