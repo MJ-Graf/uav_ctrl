@@ -66,4 +66,6 @@ RUN cd /opt/px4_ros_com_ros2/src/px4_ros_com/scripts \
     && bash -c "source build_ros2_workspace.bash --ros_distro foxy --ros_path /opt/ros/foxy/install/setup.bash --verbose"
 
 
+COPY ./docker-entrypoint.sh /bin
+ENTRYPOINT ["/bin/docker-entrypoint.sh"]
 
